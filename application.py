@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import List, Tuple, Set
 from random import randint
 
+
 class Game:
     def __init__(self, H, D) -> None:
         """
@@ -200,11 +201,12 @@ class GUIGame(Game):
             st.session_state.complete = (x, self.num_drops, True)
             st.session_state.webstate = 'result'
             return
-
+        
         if d >= self.D or k <= 1:
             st.session_state.complete = (x, self.num_drops, False)
             st.session_state.webstate = 'result'
             return
+
 
 def handle_game(game, container, H, D):
     with container:
@@ -215,6 +217,7 @@ def handle_game(game, container, H, D):
 
         st.session_state.strategy = strategy
         st.session_state.complete = None
+        st.session_state.confirm = None
 
 def start_ai_game():
     st.session_state.mode = 'ai'
@@ -223,6 +226,12 @@ def start_ai_game():
 def start_random_game():
     st.session_state.mode = 'random'
     st.session_state.webstate = 'play'
+
+def confirm_win():
+    st.session_state.confirm = True
+
+def confirm_lose():
+    st.session_state.confirm = False
 
 if __name__ == '__main__':
     # Initialize session_state variables
@@ -235,10 +244,14 @@ if __name__ == '__main__':
     if 'strategy' not in st.session_state:
         # Preserves does the computer have strategy or not
         st.session_state.strategy = None
+    if 'confirm' not in st.session_state:
+        # Preserves confirmation at the end of the game
+        st.session_state.confirm = None
     
     if 'webstate' not in st.session_state:
         # Preserves the state of the web page 'select', 'choose', 'play' or 'result'
         st.session_state.webstate = 'select'
+
 
     st.set_page_config(
         page_title="Dropping Bricks Puzzle",
@@ -261,17 +274,21 @@ if __name__ == '__main__':
         
         start = st.button("Start game", on_click=lambda: handle_game(game, playground, H, D), type='primary')
 
+
         if st.session_state.webstate == 'choose':
             if st.session_state.strategy:
                 st.write("Computer **has** winning strategy.")
+                st.write("Please, choose the prefered game mode:")
+                fcol1, fcol2 = st.columns(2)
+                with fcol1:
+                    st.button("Strategy", on_click=start_ai_game)
+                with fcol2:
+                    st.button("Random", on_click=start_random_game)
             else:
                 st.write("Comuter **does not** have winning strategy.")
-            st.write("Please, choose the prefered game mode:")
-            fcol1, fcol2 = st.columns(2)
-            with fcol1:
-                st.button("Strategy", on_click=start_ai_game)
-            with fcol2:
-                st.button("Random", on_click=start_random_game)
+                st.write("But you can play random game instead!")
+                st.button("Start random game", on_click=start_random_game)
+            
 
         if st.session_state.webstate == 'play':
             if st.session_state.mode == 'ai':
@@ -286,16 +303,32 @@ if __name__ == '__main__':
                 st.button("Safe", on_click=game.safe_step)
             with fcol2:
                 st.button("Broken", on_click=game.broken_step)
-            
+        
+
         if st.session_state.webstate == 'result':
             s, n, won = st.session_state.complete
             if won:
                 st.write(f"""
-                        The stability of the bricks is **{s}**. The game completed in **{n}** moves.\n
-                        *You can start the game again.*
+                        The stability of the bricks is **{s}**. The game completed in **{n}** moves.
                         """)
+                if st.session_state.confirm is None:
+                    fcol1, fcol2 = st.columns(2)
+                    with fcol1:
+                        st.button("Confirm bot win", on_click=confirm_win)
+                    with fcol2:
+                        st.button("Deny bot win", on_click=confirm_lose)
+                else:
+                    if st.session_state.confirm:
+                        st.write("Yay! 🎉")
+                    if not st.session_state.confirm:
+                        st.write("Maybe, something went wrong... 😔")
+                    st.write("*You can start the game again.*")
             else:
                 st.write(f"""
                         The computer failed to find the stability of the bricks in the allowed number
                          of drops. Maximum *safe* height is {s}.
                         """)
+
+            
+            
+            
