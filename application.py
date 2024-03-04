@@ -198,7 +198,7 @@ class GUIGame(Game):
             st.session_state.complete = (x, self.num_drops, True)
             st.session_state.webstate = 'result'
 
-        if d >= self.D or k <= 0:
+        if d >= self.D or k <= 1:
             st.session_state.complete = (x, self.num_drops, False)
             st.session_state.webstate = 'result'
 
