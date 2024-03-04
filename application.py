@@ -183,10 +183,12 @@ class GUIGame(Game):
         if self.m == y:
             st.session_state.complete = (y, self.num_drops, True)
             st.session_state.webstate = 'result'
+            return
         
         if d >= self.D or k <= 0:
             st.session_state.complete = (self.m, self.num_drops, False)
             st.session_state.webstate = 'result'
+            return
     
     def broken_step(self) -> None:
         # set next state
@@ -197,10 +199,12 @@ class GUIGame(Game):
         if x == self.m - 1:
             st.session_state.complete = (x, self.num_drops, True)
             st.session_state.webstate = 'result'
+            return
 
         if d >= self.D or k <= 1:
             st.session_state.complete = (x, self.num_drops, False)
             st.session_state.webstate = 'result'
+            return
 
 def handle_game(game, container, H, D):
     with container:
