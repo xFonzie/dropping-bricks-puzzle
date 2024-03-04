@@ -279,7 +279,7 @@ if __name__ == '__main__':
             elif st.session_state.mode == 'random':
                 m = game.step_random()
 
-            st.metric(label="Computer drops", value=m, delta_color='off', delta=f'Total drops: {game.num_drops}')
+            st.metric(label="Computer drops", value=m, delta_color='off', delta=f'Total drops: {game.num_drops}, bricks remaining: {game.state[2]}')
             st.write("Your response:")
             fcol1, fcol2 = st.columns(2)
             with fcol1:
