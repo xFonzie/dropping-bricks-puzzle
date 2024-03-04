@@ -245,9 +245,9 @@ if __name__ == '__main__':
 
     col1, col2 = st.columns(2)
     with col1:
-        H = st.number_input('Insert the height of the tower (H):', min_value=1, value=100, step=1)
+        H = st.number_input('Insert the height of the tower (H):', min_value=1, value=125, step=1)
     with col2:
-        D = st.number_input('Insert the upper bound of allowed number of drops (D):', min_value=0, max_value=H, value=min(14, H), step=1)
+        D = st.number_input('Insert the upper bound of allowed number of drops (D):', min_value=0, max_value=H, value=min(16, H), step=1)
     
     if 'game' not in st.session_state:
         st.session_state.game = GUIGame(H, D)
